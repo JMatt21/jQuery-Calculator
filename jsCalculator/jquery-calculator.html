@@ -51,7 +51,7 @@
               
               <div class="row mb-2">
               <button id="button-0" class="btn btn-primary number col-sm ml-1 mr-1" value="0"><h1>0</h1></button>
-              <button id="button-divide" class="btn btn-danger operator col-sm ml-1 mr-1" value="÷  "><h1>&divide;</h1></button>
+              <button id="button-divide" class="btn btn-danger operator col-sm ml-1 mr-1" value="/"><h1>&divide;</h1></button>
               <button id="button-power" class="btn btn-danger operator col-sm ml-1 mr-1" value="^"><h1>^</h1></button>
               <button id="button-equal" class="btn btn-success equal col-sm ml-1 mr-1" value="equals"><h1>=</h1></button>
               </div>
@@ -83,24 +83,23 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-
-// Your code here...
-
-  $(".number").on("click", function(){
+  function onNumber(number){
     if($("#operator").text() === ""){
-      $("#first-number").append(this.value);
+      $("#first-number").append(number);
     }
     else{
-      $("#second-number").append(this.value);
+      $("#second-number").append(number);
     }
-  });
+  }
 
-  $(".operator").on("click", function(){
+  function onOperator(key){
     if(!($("#first-number").text() === "")){
-      $("#operator").text(this.value);
+      if(key === "/") {key = "÷"}
+      $("#operator").text(key);
     }
-  });
-  $("#button-equal").on("click", function(){
+  }
+
+  function onEquals(){
     var firstNum  = (parseInt($("#first-number").text()));
     var operator  = (($("#operator").text()));
     // console.log(operator);
@@ -118,14 +117,16 @@ $(document).ready(function() {
       case "^": $("#result").text('= ' + (Math.pow(firstNum, secondNum)));
         break;
     }
-    //make a new line
-    // var newDiv = $("<div>");
-    // newDiv.html("<br> <h1>hello</h1>");
-    // $("#resultBody").append(newDiv);
+  }
 
+  function onClear() {
+    $("#first-number").empty();
+    $("#operator").empty();
+    $("#second-number").empty();
+    $("#result").empty();
+  }
 
-  });
-  $("#button-clear").on("click", function(){
+  function onBack() {
     if ($("#operator").text() === ""){
       $("#first-number").empty();  
     }
@@ -136,16 +137,49 @@ $(document).ready(function() {
       $("#second-number").empty();
       $("#result").empty();
     }
+  }
+// Your code here...
+
+  $(".number").on("click", function(){
+    onNumber(this.value);
+  });
+
+  $(document).on("keydown", function(){
+    console.log(event.key);
+    var operatorKeys = ["+","-","*","^","/"];
+    // var equalKeys = ["=", "Enter"];
+    if(event.key >= 0 && event.key <= 9){
+      onNumber(event.key);
+    }
+    else if (operatorKeys.includes(event.key)){
+      onOperator(event.key);
+    }
+    else if (event.key == "Enter"){
+      onEquals();
+    }
+    else if (event.key == "Backspace"){
+      onBack();
+    }
+    else if (event.key == ']'){
+      onClear();
+    }
+  });
+
+  $(".operator").on("click", function(){
+    onOperator(this.value);
+  });
+
+  $("#button-equal").on("click", function(){
+    onEquals();
+  });
+
+  $("#button-clear").on("click", function(){
+    onBack();
   });
 
   $("#button-clear-all").on("click", function(){
-    $("#first-number").empty();
-    $("#operator").empty();
-    $("#second-number").empty();
-    $("#result").empty();
+    onClear();
   });
-
-
 });
 
 </script>
